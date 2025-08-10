@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Realtime Assistant</title>
+  <style>
+    body { font-family: sans-serif; margin: 1rem; }
+    #controls { margin-bottom: 1rem; }
+    #transcript { white-space: pre-wrap; border: 1px solid #ccc; padding: 0.5rem; height: 200px; overflow-y: auto; }
+  </style>
+</head>
+<body>
+  <div id="controls">
+    <select id="model">
+      <option value="gpt-4o-realtime-preview">Fast GPT-4o Realtime</option>
+      <option value="gpt-4o-realtime-preview-quality">Quality GPT-4o Realtime</option>
+    </select>
+    <button id="start">Start</button>
+    <button id="stop" disabled>Stop</button>
+  </div>
+  <audio id="remote" autoplay></audio>
+  <div id="transcript"></div>
+  <script type="module" src="./renderer.js"></script>
+</body>
+</html>
