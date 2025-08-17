@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Realtime Assistant - AI Помощник для звонков</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Заголовок -->
+    <header class="app-header">
+      <div class="header-content">
+        <h1 class="app-title">
+          <span class="icon">🎤</span>
+          Realtime Assistant
+        </h1>
+        <p class="app-subtitle">AI Помощник для голосовых звонков и собеседований</p>
+      </div>
+      
+      <!-- Статус приложения -->
+      <div class="status-indicator" id="statusIndicator">
+        <div class="status-dot" id="statusDot"></div>
+        <span class="status-text" id="statusText">Готов к работе</span>
+      </div>
+    </header>
+
+    <!-- Панель управления -->
+    <div class="control-panel">
+      <div class="control-group">
+        <label for="modelSelect" class="control-label">Модель AI:</label>
+        <select id="modelSelect" class="control-select">
+          <option value="gpt-4o-mini-realtime-preview-2024-12-17">GPT-4o-mini Realtime (быстрый)</option>
+          <option value="gpt-4o-realtime-preview-2024-12-17">GPT-4o Realtime (качественный)</option>
+        </select>
+      </div>
+      
+      <div class="control-group">
+        <button id="startBtn" class="btn btn-primary">
+          <span class="btn-icon">🎤</span>
+          Начать захват звука
+        </button>
+        <button id="stopBtn" class="btn btn-danger" style="display: none;">
+          <span class="btn-icon">⏹️</span>
+          Остановить
+        </button>
+      </div>
+      
+      <div class="control-group">
+        <button id="settingsBtn" class="btn btn-secondary">
+          <span class="btn-icon">⚙️</span>
+          Настройки
+        </button>
+        <button id="helpBtn" class="btn btn-secondary">
+          <span class="btn-icon">❓</span>
+          Помощь
+        </button>
+      </div>
+    </div>
+
+    <!-- Основной контент -->
+    <div class="main-content">
+      <!-- Левая колонка - Транскрипт -->
+      <div class="content-column">
+        <div class="column-header">
+          <h2 class="column-title">
+            <span class="icon">📝</span>
+            Транскрипт речи
+          </h2>
+          <div class="column-controls">
+            <button id="clearTranscriptBtn" class="btn-icon-small" title="Очистить транскрипт">
+              🗑️
+            </button>
+          </div>
+        </div>
+        
+        <div class="transcript-container">
+          <div id="transcriptText" class="transcript-text">
+            <div class="placeholder-text">
+              <span class="icon">🎧</span>
+              <p>Ожидание речи собеседника...</p>
+              <p class="placeholder-hint">Запустите захват звука и начните говорить</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Индикатор VAD -->
+        <div class="vad-indicator" id="vadIndicator">
+          <div class="vad-dot"></div>
+          <span class="vad-text">VAD: Ожидание</span>
+        </div>
+      </div>
+
+      <!-- Правая колонка - Ответы AI -->
+      <div class="content-column">
+        <div class="column-header">
+          <h2 class="column-title">
+            <span class="icon">🤖</span>
+            Ответы AI
+          </h2>
+          <div class="column-controls">
+            <button id="clearResponsesBtn" class="btn-icon-small" title="Очистить ответы">
+              🗑️
+            </button>
+          </div>
+        </div>
+        
+        <div class="responses-container">
+          <!-- Русский ответ -->
+          <div class="response-item">
+            <div class="response-header">
+              <span class="response-lang">🇷🇺 Русский</span>
+              <span class="response-status" id="status-RU">Ожидание...</span>
+            </div>
+            <div id="response-RU" class="response-text">
+              <div class="placeholder-text">
+                <span class="icon">💭</span>
+                <p>Ожидание ответа...</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Английский ответ -->
+          <div class="response-item">
+            <div class="response-header">
+              <span class="response-lang">🇺🇸 English</span>
+              <span class="response-status" id="status-EN">Waiting...</span>
+            </div>
+            <div id="response-EN" class="response-text">
+              <div class="placeholder-text">
+                <span class="icon">💭</span>
+                <p>Waiting for response...</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Шведский ответ -->
+          <div class="response-item">
+            <div class="response-header">
+              <span class="response-lang">🇸🇪 Svenska</span>
+              <span class="response-status" id="status-SV">Väntar...</span>
+            </div>
+            <div id="response-SV" class="response-text">
+              <div class="placeholder-text">
+                <span class="icon">💭</span>
+                <p>Väntar på svar...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Панель статистики -->
+    <div class="stats-panel" id="statsPanel" style="display: none;">
+      <div class="stats-header">
+        <h3>📊 Статистика</h3>
+        <button id="hideStatsBtn" class="btn-icon-small">✕</button>
+      </div>
+      <div class="stats-content">
+        <div class="stat-item">
+          <span class="stat-label">Время работы:</span>
+          <span class="stat-value" id="statDuration">00:00</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Аудио чанков:</span>
+          <span class="stat-value" id="statAudioChunks">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Транскриптов:</span>
+          <span class="stat-value" id="statTranscripts">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Ответов:</span>
+          <span class="stat-value" id="statResponses">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Уведомления -->
+    <div id="notifications" class="notifications"></div>
+  </div>
+
+  <!-- Модальные окна -->
+  <div id="settingsModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>⚙️ Настройки</h3>
+        <button class="modal-close" onclick="closeModal('settingsModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="setting-group">
+          <label for="vadSensitivity">Чувствительность VAD:</label>
+          <input type="range" id="vadSensitivity" min="0" max="1" step="0.1" value="0.5">
+          <span class="setting-value" id="vadSensitivityValue">0.5</span>
+        </div>
+        <div class="setting-group">
+          <label for="autoStart">Автозапуск при старте:</label>
+          <input type="checkbox" id="autoStart">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('settingsModal')">Отмена</button>
+        <button class="btn btn-primary" onclick="saveSettings()">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="helpModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>❓ Помощь</h3>
+        <button class="modal-close" onclick="closeModal('helpModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <h4>Как использовать:</h4>
+        <ol>
+          <li>Выберите модель AI (быстрая или качественная)</li>
+          <li>Нажмите "Начать захват звука"</li>
+          <li>Говорите в микрофон или воспроизводите звук</li>
+          <li>AI автоматически транскрибирует речь и генерирует ответы</li>
+        </ol>
+        
+        <h4>Горячие клавиши:</h4>
+        <ul>
+          <li><strong>F12</strong> - Открыть DevTools</li>
+          <li><strong>Ctrl+Shift+I</strong> - Открыть DevTools</li>
+          <li><strong>Ctrl+Shift+R</strong> - Перезагрузить приложение</li>
+        </ul>
+        
+        <h4>Поддерживаемые источники звука:</h4>
+        <ul>
+          <li>Системный звук (динамики)</li>
+          <li>Zoom, Teams, Discord</li>
+          <li>Любые приложения с аудио</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="closeModal('helpModal')">Понятно</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

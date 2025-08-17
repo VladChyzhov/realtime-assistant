@@ -1,13 +1,54 @@
 {
   "name": "realtime-assistant",
   "version": "1.0.0",
-  "type": "module",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "test": "echo \"No tests\""
+    "dev": "NODE_ENV=development electron .",
+    "build": "electron-builder",
+    "postinstall": "electron-builder install-app-deps",
+    "ts": "ts-node --cwd-mode",
+    "electron:sysaudio": "electron ./playground/capture-electron-win/main.cjs"
   },
   "dependencies": {
-    "electron": "^30.5.1"
+    "@deepgram/sdk": "^4.11.2",
+    "dotenv": "^16.4.7",
+    "dotenv-flow": "^4.1.0",
+    "express": "^4.18.2",
+    "node-fetch": "^3.3.2",
+    "node-rtsp-stream": "^0.0.9",
+    "openai": "^4.104.0",
+    "socket.io": "^4.7.4",
+    "wav": "^1.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "electron": "^30.0.0",
+    "electron-builder": "^24.9.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2",
+    "ws": "^8.18.3"
+  },
+  "build": {
+    "appId": "com.realtime.assistant",
+    "productName": "Realtime AI Assistant",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!node_modules/**/*",
+      "!dist/**/*",
+      "!.git/**/*"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
   }
 }
