@@ -1,7 +1,7 @@
 {
   "name": "realtime-assistant",
   "version": "1.0.0",
-  "main": "main.js",
+  "main": "playground/capture-electron-win/main.cjs",
   "scripts": {
     "start": "electron .",
     "dev": "NODE_ENV=development electron .",
@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.3.0",
+    "@types/ws": "^8.18.1",
     "electron": "^30.0.0",
     "electron-builder": "^24.9.1",
     "ts-node": "^10.9.2",

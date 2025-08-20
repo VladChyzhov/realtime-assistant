@@ -3,39 +3,104 @@
 <head>
   <meta charset="utf-8" />
   <title>Захват системного звука (Windows)</title>
-  <style>
-    body { font-family: system-ui, sans-serif; margin: 24px; }
-    h1 { margin-top: 0; }
-    button { padding: 8px 14px; font-size: 14px; cursor: pointer; }
-    #vol { font-size: 18px; font-weight: 600; margin-top: 12px; }
-    #status { margin-top: 8px; }
-    .note { color: #555; }
-    #transcript { margin-top:16px; font-size:16px; white-space:pre-line; }
-  </style>
+  <link rel="stylesheet" href="./styles.css">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self';
+                 script-src 'self';
+                 connect-src 'self' https://api.deepgram.com wss://api.deepgram.com;
+                 img-src 'self' data:;
+                 style-src 'self' 'unsafe-inline'>
 </head>
 <body>
-  <h1>Захват системного звука (Windows)</h1>
+  <div class="container">
+    <div class="header">
+      <h1>🎙️ Захват системного звука</h1>
+      <p>Realtime AI Assistant - Windows</p>
+    </div>
+    
+    <div class="content">
+      <div class="instructions">
+        <h3>📋 Инструкции по запуску:</h3>
+        <ol>
+          <li>Нажми <b>Start</b> для начала захвата</li>
+          <li>Во всплывающем окне выбери <b>весь экран (Entire screen)</b> — так Chromium отдаст <b>системный звук</b></li>
+          <li>Нажми <b>Разрешить</b> / <b>Allow</b></li>
+          <li>Включи музыку/видео — смотри, как меняется <b>Volume</b></li>
+        </ol>
+      </div>
 
-  <ol>
-    <li>Нажми <b>Start</b>.</li>
-    <li>Во всплывающем окне выбери <b>весь экран (Entire screen)</b> — так Chromium отдаст <b>системный звук</b>.</li>
-    <li>Нажми <b>Разрешить</b> / <b>Allow</b>.</li>
-    <li>Включи музыку/видео — смотри, как меняется <b>Volume</b>.</li>
-  </ol>
+      <div class="controls">
+        <button id="startBtn" class="btn btn-primary">
+          🚀 Start
+        </button>
+        <button id="stopBtn" class="btn btn-danger">
+          ⏹️ Stop
+        </button>
+      </div>
 
-  <p class="note">
-    Если выберешь отдельное окно вместо экрана — аудиодорожки может не быть.<br/>
-    Сообщение про <i>Autofill.enable</i> в консоли — безобидно, игнорируй.
-  </p>
+      <div class="status-panel">
+        <div class="status-grid">
+          <div class="status-item">
+            <div class="status-label">Статус</div>
+            <div class="status-value" id="status">Готово</div>
+          </div>
+          <div class="status-item">
+            <div class="status-label">Громкость</div>
+            <div class="status-value" id="vol">0</div>
+          </div>
+          <div class="status-item">
+            <div class="status-label">Аудио контекст</div>
+            <div class="status-value" id="audio-context-state">-</div>
+          </div>
+          <div class="status-item">
+            <div class="status-label">Sample Rate</div>
+            <div class="status-value" id="sample-rate">-</div>
+          </div>
+        </div>
+      </div>
 
-  <button id="startBtn">Start</button>
-  <button id="stopBtn">Stop</button>
+      <div class="debug-info">
+        <h3>🔍 Диагностическая информация</h3>
+        <div class="debug-grid">
+          <div class="debug-item">
+            <span class="debug-label">Отправлено чанков:</span>
+            <span class="debug-value" id="chunks-sent">0</span>
+          </div>
+          <div class="debug-item">
+            <span class="debug-label">Deepgram статус:</span>
+            <span class="debug-value" id="dg-status">-</span>
+          </div>
+        </div>
+      </div>
 
-  <div id="status">Готово.</div>
-  <div id="vol">Volume: 0</div>
-  <div id="transcript"></div>
+      <div class="transcript-panel">
+        <div class="transcript-header">
+          <h3 class="transcript-title">📝 Транскрипт</h3>
+          <div class="transcript-controls">
+            <button class="btn btn-secondary" onclick="clearTranscript()">🗑️ Очистить</button>
+          </div>
+        </div>
+        <div class="transcript-content" id="transcript">
+          <div class="transcript-item">
+            <em>Ожидание речи... Нажмите Start и начните говорить</em>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <strong>💡 Важно:</strong> Если выберешь отдельное окно вместо экрана — аудиодорожки может не быть.<br/>
+        Сообщение про <i>Autofill.enable</i> в консоли — безобидно, игнорируй.
+      </div>
+    </div>
+  </div>
 
   <script src="./renderer.js"></script>
+  <script>
+    function clearTranscript() {
+      const transcript = document.getElementById('transcript');
+      transcript.innerHTML = '<div class="transcript-item"><em>Транскрипт очищен</em></div>';
+    }
+  </script>
 </body>
 </html>
  
